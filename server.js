@@ -8,20 +8,18 @@ const db = mysql.createConnection({
     host: 'localhost',
     port: 3306,
     user: 'root',
-    password: '',
+    password: 'Three#369nine',
     database: 'employees_db'
 });
 
 db.connect(function(err) {
     if (err) throw err;
-
-    console.log(`Connected to the MySQL server.`);
-
     selectionScreen();
 });
 
 const selectionScreen = () => {
-    return inquirer.createPromptModule({
+    inquirer.prompt([
+    {
       type: "list",
       choices: [
         "View all departments",
@@ -35,7 +33,8 @@ const selectionScreen = () => {
       ],
       name: "selections",
       message: "Please select one of the following:"      
-})
+    }
+])
 .then(answers => {
     switch (answers.selections) {
         case "View all departments": displayAllDepartments(); break;
@@ -48,4 +47,30 @@ const selectionScreen = () => {
         case "Exit": console.log("You are now exiting the employee database"); Connection.end(); break;
         }
 })
+}
+
+const displayAllDepartments = () => {
+  db.query("SELECT * FROM departments", function (err, res) {
+    if (err) {console.log(err)
+    }
+    console.table(res);
+    
+  })
+  
+}
+
+const displayAllRoles = () => {
+  db.query("SELECT id, title, salary, department_id FROM roles", function (err, res) {
+    if (err) {console.log(err)}
+    console.table(res);
+    
+  })
+  
+}
+
+const displayAllEmployees = () => {
+  db.query("SELECT firstName, lastName, role_Id, manager_Id FROM employees JOIN roles ON employees", function (err, res){
+    if (err) {console.log(err)}
+    console.table(res);
+  })
 }
